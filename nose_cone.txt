@@ -1,0 +1,4 @@
+Geometry: Von Karman
+Thickness: 15	25
+Inner Diameter: 25
+Length: 30

@@ -49,12 +49,54 @@ class TubePage(tk.Frame):  # Inherit from tk.Frame
         label = tk.Label(self, text="Tube")
         label.pack()
 
-class NoseConePage(tk.Frame):  # Inherit from tk.Frame
+class NoseConePage(tk.Frame):  # Nose cone page
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         label = tk.Label(self, text="Nose Cone")
         label.pack()
+
+        #user can choose what kind of nose cone geometry they want to use
+        label = tk.Label(self, text="What geometry do you want")
+        label.pack()
+        nose_cone_options = ['Von Karman', 'Tangent Ogive']
+        clicked = tk.StringVar() #variable that stores what option user chose
+        clicked.set(nose_cone_options[0]) #set it to the first option (Von Karman)
+        drop = tk.OptionMenu( self , clicked , *nose_cone_options ) #creates the dropdown
+        drop.pack()
+
+        #Choosing Thickness section
+        label = tk.Label(self, text="Thickness")
+        label.pack()
+        thickness = tk.Text(self, width=10, height=1)
+        thickness.pack()
+
+        #inner diameter section
+        label = tk.Label(self, text="Inner diameter")
+        label.pack()
+        inner_diameter = tk.Text(self, width=10, height=1)
+        inner_diameter.pack()
+
+        #Nose cone length section
+        label = tk.Label(self, text="Length")
+        label.pack()
+        length = tk.Text(self, width=10, height=1)
+        length.pack()
+
+        save_button = tk.Button(self, text="Save", command=lambda: save_to_file())
+        save_button.pack()
+
+        def save_to_file():
+            file = open("nose_cone.txt", "w")
+            file.write('Geometry: ' + str(clicked.get()) + "\n")
+            file.write('Thickness: ' + str(thickness.get("1.0", "end-1c")) + "\n")
+            file.write('Inner Diameter: ' + str(inner_diameter.get("1.0", "end-1c")) + "\n")
+            file.write('Length: ' + str(length.get("1.0", "end-1c")) + "\n")
+
+
+
+
+
 
 
 
