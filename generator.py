@@ -36,11 +36,14 @@ class LandingPage(tk.Frame):
 
         self.controller = controller
 
-        to_tube = tk.Button(self, text = "Tube", command=lambda: controller.up_frame("TubePage"))
-        to_tube.pack()
-
-        to_nose_cone = tk.Button(self, text = "Nose Cone", command=lambda: controller.up_frame("NoseConePage"))
-        to_nose_cone.pack()
+        button_frame = tk.Frame(self)
+        button_frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        to_tube = tk.Button(button_frame, text="Tube", command=lambda: controller.up_frame("TubePage"))
+        to_tube.pack(pady=5)
+        
+        to_nose_cone = tk.Button(button_frame, text="Nose Cone", command=lambda: controller.up_frame("NoseConePage"))
+        to_nose_cone.pack(pady=5)
 
 class TubePage(tk.Frame):  # Inherit from tk.Frame
     def __init__(self, parent, controller):
@@ -53,45 +56,69 @@ class NoseConePage(tk.Frame):  # Nose cone page
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="Nose Cone")
-        label.pack()
+        content_frame = tk.Frame(self)
+        content_frame.place(relx=0.5, rely=0.5, anchor="center")
+        
+        label = tk.Label(content_frame, text="Nose Cone")
+        label.pack(pady=5)
 
-        #user can choose what kind of nose cone geometry they want to use
-        label = tk.Label(self, text="What geometry do you want")
-        label.pack()
+        # User can choose what kind of nose cone geometry they want to use.
+        geo_label = tk.Label(content_frame, text="What geometry do you want")
+        geo_label.pack(pady=5)
         nose_cone_options = ['Von Karman', 'Tangent Ogive']
-        clicked = tk.StringVar() #variable that stores what option user chose
-        clicked.set(nose_cone_options[0]) #set it to the first option (Von Karman)
-        drop = tk.OptionMenu( self , clicked , *nose_cone_options ) #creates the dropdown
-        drop.pack()
+        clicked = tk.StringVar()  # variable that stores what option user chose
+        clicked.set(nose_cone_options[0])  # set it to the first option (Von Karman)
+        drop = tk.OptionMenu(content_frame, clicked, *nose_cone_options)
+        drop.pack(pady=5)
 
-        #Choosing Thickness section
-        label = tk.Label(self, text="Thickness")
-        label.pack()
-        thickness = tk.Text(self, width=10, height=1)
-        thickness.pack()
+        def validate_number(P):
+            # Allow empty input, otherwise try converting to float.
+            if P == "":
+                return True
+            try:
+                float(P)
+                return True
+            except ValueError:
+                return False
 
-        #inner diameter section
-        label = tk.Label(self, text="Inner diameter")
-        label.pack()
-        inner_diameter = tk.Text(self, width=10, height=1)
-        inner_diameter.pack()
+        # Setup validation for numeric input.
+        vcmd = (self.register(validate_number), '%P')
 
-        #Nose cone length section
-        label = tk.Label(self, text="Length")
-        label.pack()
-        length = tk.Text(self, width=10, height=1)
-        length.pack()
+        # Thickness Entry
+        thickness_label = tk.Label(content_frame, text="Thickness")
+        thickness_label.pack(pady=5)
+        thickness_entry = tk.Entry(content_frame, width=10, validate="key", validatecommand=vcmd)
+        thickness_entry.pack(pady=5)
 
-        save_button = tk.Button(self, text="Save", command=lambda: save_to_file())
-        save_button.pack()
+        # Inner Diameter Entry
+        inner_diameter_label = tk.Label(content_frame, text="Inner Diameter")
+        inner_diameter_label.pack(pady=5)
+        inner_diameter_entry = tk.Entry(content_frame, width=10, validate="key", validatecommand=vcmd)
+        inner_diameter_entry.pack(pady=5)
+
+        # Nose Cone Length Entry
+        length_label = tk.Label(content_frame, text="Length")
+        length_label.pack(pady=5)
+        length_entry = tk.Entry(content_frame, width=10, validate="key", validatecommand=vcmd)
+        length_entry.pack(pady=5)
+
+        save_button = tk.Button(content_frame, text="Save", command=lambda: save_to_file())
+        save_button.pack(pady=10)
 
         def save_to_file():
-            file = open("nose_cone.txt", "w")
-            file.write('Geometry: ' + str(clicked.get()) + "\n")
-            file.write('Thickness: ' + str(thickness.get("1.0", "end-1c")) + "\n")
-            file.write('Inner Diameter: ' + str(inner_diameter.get("1.0", "end-1c")) + "\n")
-            file.write('Length: ' + str(length.get("1.0", "end-1c")) + "\n")
+            data = {
+                "Geometry": clicked.get(),
+                "Thickness": thickness_entry.get(),
+                "Inner Diameter": inner_diameter_entry.get(),
+                "Length": length_entry.get()
+            }
+            with open("nose_cone.json", "w") as file:
+                json.dump(data, file, indent=4)
+            # file = open("nose_cone.txt", "w")
+            # file.write('Geometry: ' + str(clicked.get()) + "\n")
+            # file.write('Thickness: ' + str(thickness.get("1.0", "end-1c")) + "\n")
+            # file.write('Inner Diameter: ' + str(inner_diameter.get("1.0", "end-1c")) + "\n")
+            # file.write('Length: ' + str(length.get("1.0", "end-1c")) + "\n")
 
 
 
