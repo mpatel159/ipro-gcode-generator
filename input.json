@@ -1,0 +1,7 @@
+{
+    "type": "tube",
+    "inner_diameter": 10.0,
+    "wall_thickness": 20.0,
+    "length": 30.0,
+    "feed_rate": 1500
+}

@@ -73,27 +73,29 @@ class TubePage(tk.Frame):
 
     def generate_gcode(self):
         try:
-            inner_diameter = float(self.inner_diameter.get())
-            wall_thickness = float(self.wall_thickness.get())
-            length = float(self.length.get())
+                inner_diameter = float(self.inner_diameter.get())
+                wall_thickness = float(self.wall_thickness.get())
+                length = float(self.length.get())
 
-            if inner_diameter <= 0 or wall_thickness <= 0 or length <= 0:
-                raise ValueError("All values must be greater than zero.")
+                if inner_diameter <= 0 or wall_thickness <= 0 or length <= 0:
+                    raise ValueError("All values must be greater than zero.")
 
-            gcode = []
-            gcode.append("G0 X0 Y0 Z0")
-            gcode.append(f"G92 X{inner_diameter} Y{wall_thickness} Z{length}")
-            gcode.append("; Layer 1")
-            gcode.append(f"G1 X{inner_diameter + 1} Y{wall_thickness + 1} Z{length + 1} F1500")
+                input_data = {
+                    "type": "tube",
+                    "inner_diameter": inner_diameter,
+                    "wall_thickness": wall_thickness,
+                    "length": length,
+                    "feed_rate": 1500
+                }
 
-            with open("output.gcode", "w") as f:
-                f.write("\n".join(gcode))
+                with open("input.json", "w") as f:
+                    json.dump(input_data, f, indent=4)
 
-            messagebox.showinfo("Success", "G-Code has been generated!")
-            self.display_gcode()
+                messagebox.showinfo("Success", "JSON file has been generated! You can use Node.js to process it.")
 
         except ValueError:
             messagebox.showerror("Error", "Please enter valid numbers!")
+
 
     def display_gcode(self):
         try:
