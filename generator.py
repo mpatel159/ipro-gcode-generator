@@ -136,28 +136,39 @@ class NoseConePage(tk.Frame):
 
     def generate_gcode(self):
         try:
-            geometry_type = self.geometry_type.get()
-            thickness = float(self.thickness.get())
             inner_diameter = float(self.inner_diameter.get())
+            wall_thickness = float(self.wall_thickness.get())
             length = float(self.length.get())
 
-            if thickness <= 0 or inner_diameter <= 0 or length <= 0:
+            if inner_diameter <= 0 or wall_thickness <= 0 or length <= 0:
                 raise ValueError("All values must be greater than zero.")
+
+            input_data = {
+                "type": "tube",
+                "inner_diameter": inner_diameter,
+                "wall_thickness": wall_thickness,
+                "length": length,
+                "feed_rate": 1500
+            }
+
+            with open("input.json", "w") as f:
+                json.dump(input_data, f, indent=4)
 
             gcode = []
             gcode.append("G0 X0 Y0 Z0")
-            gcode.append(f"G92 X{inner_diameter} Y{thickness} Z{length}")
+            gcode.append(f"G92 X{inner_diameter} Y{wall_thickness} Z{length}")
             gcode.append("; Layer 1")
-            gcode.append(f"G1 X{inner_diameter + 1} Y{thickness + 1} Z{length + 1} F1500")
+            gcode.append(f"G1 X{inner_diameter + 1} Y{wall_thickness + 1} Z{length + 1} F{input_data['feed_rate']}")
 
             with open("output.gcode", "w") as f:
                 f.write("\n".join(gcode))
 
-            messagebox.showinfo("Success", "G-Code has been generated!")
+            messagebox.showinfo("Success", "G-Code has been generated and saved to output.gcode.")
             self.display_gcode()
 
         except ValueError:
             messagebox.showerror("Error", "Please enter valid numbers!")
+
 
     def display_gcode(self):
         try:
